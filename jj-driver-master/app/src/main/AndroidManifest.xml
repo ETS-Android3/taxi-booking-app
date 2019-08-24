@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="main.com.jjtaxidriver">
+
+    <permission
+        android:name="main.com.jjtaxidriver.googlemapsv2.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <!-- <uses-permission android:name="info.androidhive.googlemapsv2.permission.MAPS_RECEIVE" /> -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="main.com.jjtaxidriver.permission.MAPS_RECEIVE" />
+
+    <!-- Required OpenGL ES 2.0. for Maps V2 -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:name="android.support.multidex.MultiDexApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:excludeFromRecents="true"
+        android:screenOrientation="portrait"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.MainActivityDummy"
+            android:label="" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".activity.PrivacyPolicyAct"
+            android:label="" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.LanguageAct"
+            android:label="" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.ProfileAct"
+            android:label="" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.draweractivity.BaseActivity"
+            android:label="" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/googlekey" />
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.WelcomeAct" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.LoginAct" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.ForgotPassword" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.SetLocation" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.SignupActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.PaymentAct" />
+        <activity
+
+            android:name="main.com.jjtaxidriver.activity.ChatingAct"
+            android:label=""
+            android:screenOrientation="portrait"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:name="main.com.jjtaxidriver.MainActivity"
+            android:label="" >
+<!--
+            <intent-filter>
+                <action android:name="your booking request is Now" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+-->
+
+        </activity>
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.TripStatusAct"
+            android:label="" />
+
+        <service
+            android:name="main.com.jjtaxidriver.service.TrackingService"
+            android:enabled="true" />
+
+        <receiver android:name="main.com.jjtaxidriver.constant.MyReceiver" />
+
+        <service
+            android:name="main.com.jjtaxidriver.service.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name="main.com.jjtaxidriver.service.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.DashBoardAct"
+            android:label="" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.TransectionHistory" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.RideHistory" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.paymentclasses.ConfirmPayment" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.RideDetailAct" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.WalletAct" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.WithdrawMoney" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.CashOutAct" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.FavoriteUserAct" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="main.com.jjtaxidriver.activity.MobileVerificationActivity" />
+
+        <meta-data
+            android:name="com.facebook.accountkit.ApplicationName"
+            android:value="@string/app_name" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/FACEBOOK_APP_ID" />
+        <meta-data
+            android:name="com.facebook.accountkit.ClientToken"
+            android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
+        <meta-data
+            android:name="com.facebook.accountkit.FacebookAppEventsEnabled"
+            android:value="false" />
+
+        <activity
+            android:name="com.facebook.accountkit.ui.AccountKitActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name="main.com.jjtaxidriver.activity.PerformanceAct"></activity>
+    </application>
+
+</manifest><!--
+Alis name = JJtaxi
+password = jjtaxipartner123
+keystore name =jjdriverkeystore.jks
+password = jjtaxipartner123
+Email
+shyamtestvijay@gmail.com
+password == shyam123
+-->
