@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "204779873474",
+    "firebase_url": "https://jj-taxi-user.firebaseio.com",
+    "project_id": "jj-taxi-user",
+    "storage_bucket": "jj-taxi-user.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:204779873474:android:6730bba3cf409250",
+        "android_client_info": {
+          "package_name": "main.com.jjtaxiuser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "204779873474-cm35svb1ffgm0bd67e2ptdlg2tdg4ruf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaOJRxbn3iwZZ3SZME0uFQ9gFhUK0e09g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "204779873474-cm35svb1ffgm0bd67e2ptdlg2tdg4ruf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

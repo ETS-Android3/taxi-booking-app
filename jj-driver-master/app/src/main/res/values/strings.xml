@@ -6,6 +6,7 @@
     <string name="FACEBOOK_APP_ID">1941193059506768</string>
     <string name="facebook_app_id">1941193059506768</string>
     <string name="ACCOUNT_KIT_CLIENT_TOKEN">51c17c549405876879cb48033cfe0c03</string>
+    <string name="default_notification_channel_id">Channel_ID</string>
 
     <string name="allowpermission">Allow Permission</string>
     <string name="nessper">This permission is necessary to use Conductor Taxi JJ App.</string>
@@ -30,6 +31,9 @@
     <string name="bookletter">BOOK LATER</string>
     <string name="booknow">BOOK NOW</string>
     <string name="myprofile">Profile</string>
+
+    <string name="user_pin_code">User Pin :</string>
+
     <string name="mywallet">Wallet</string>
     <string name="money">Money</string>
     <string name="cashless"><![CDATA[Cashless, Hassle-free rides & more]]></string>
@@ -221,7 +225,11 @@
     <string name="emergency">Emergency</string>
     <string name="number">No.</string>
     <string name="allreadyaccepted">Sorry,this ride is already accepted by other driver.</string>
+    <string name="wrongpincode">Sorry, user PIN code is wrong. Please enter correct PIN code</string>
+
     <string name="cash">Cash</string>
+    <string name="corporate">Corporate</string>
+
     <string name="enteramountthatmarkedbymeter">Enter the value of the ride marked by the taximeter</string>
     <string name="stop">Stop</string>
     <string name="start">Start</string>

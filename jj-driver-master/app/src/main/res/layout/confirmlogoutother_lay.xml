@@ -22,7 +22,7 @@
             >
 
             <TextView
-android:gravity="center"
+                android:gravity="center"
                 android:id="@+id/body_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

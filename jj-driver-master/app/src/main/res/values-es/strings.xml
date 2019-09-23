@@ -6,6 +6,7 @@
     <string name="FACEBOOK_APP_ID">1941193059506768</string>
     <string name="facebook_app_id">1941193059506768</string>
     <string name="ACCOUNT_KIT_CLIENT_TOKEN">51c17c549405876879cb48033cfe0c03</string>
+    <string name="default_notification_channel_id">Channel_ID</string>
 
 
     <string name="allowpermission">Autorizar Permiso</string>
@@ -30,6 +31,7 @@
     <string name="sign_sm">Regístrate</string>
     <string name="bookletter">RESERVAR</string>
     <string name="booknow">PEDIR AHORA</string>
+    <string name="user_pin_code">Pin Usuario :</string>
     <string name="myprofile">Perfil</string>
     <string name="mywallet">Método de Pago</string>
     <string name="money">Dinero</string>
@@ -223,6 +225,8 @@
     <string name="number">No.</string>
     <string name="allreadyaccepted">Esta carrera ya fue aceptada por otro conductor</string>
     <string name="cash">Efectivo</string>
+    <string name="corporate">Corporativo</string>
+
     <string name="enteramountthatmarkedbymeter">Introduzca el valor del recorrido marcado por el taxímetro.
 </string>
     <string name="stop">Detener</string>
@@ -230,10 +234,11 @@
     <string name="plsstoptimer">Primero detén el temporizador de espera</string>
     <string name="time1">Tiempo de espera</string>
     <string name="privacypolicytxt">Para continuar, debe aceptar nuestra política de privacidad. Haga clic para ver</string>
+    <string name="wrongpincode">Lo sentimos, el código PIN del usuario está mal. Por favor, introduzca el código PIN correcto</string>
     <string name="privacypolicy">Política de privacidad</string>
     <string name="write">escribir...</string>
     <string name="send">Enviar</string>
-    <string name="enteruserpin">Enter User Pin</string>
+    <string name="enteruserpin">Ingrese PIN de usuario</string>
     <string name="voucher">Voucher</string>
     <string-array name="language">
         <item>@string/english</item>

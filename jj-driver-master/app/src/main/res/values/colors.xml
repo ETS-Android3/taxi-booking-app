@@ -15,5 +15,5 @@
     <color name="black">#000000</color>
     <color name="lightgrey">#d9d8d8</color>
     <color name="darktextcol">#F57C00</color>
-
+    <color name="blue">#00A0FF</color>
 </resources>

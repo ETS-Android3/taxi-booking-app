@@ -10,8 +10,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -70,6 +70,8 @@ public class PaymentAct extends AppCompatActivity {
     MyLanguageSession myLanguageSession;
     private String language = "",amount_str_main="";
     private boolean isVisible =true;
+    String user_pin_code, user_pin_code1;
+    TextView pin_textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +79,8 @@ public class PaymentAct extends AppCompatActivity {
         language = myLanguageSession.getLanguage();
         myLanguageSession.setLangRecreate(myLanguageSession.getLanguage());
         setContentView(R.layout.activity_payment);
+//        pin_textView = this.findViewById(R.id.user_pin_code);
+//        pin_textView.setVisibility(View.GONE);
         ac_dialog = new ACProgressFlower.Builder(this)
                 .direction(ACProgressConstant.DIRECT_CLOCKWISE)
                 .themeColor(Color.WHITE)
@@ -174,7 +178,19 @@ public class PaymentAct extends AppCompatActivity {
                               new SubmitPayment().execute();
                           //}
                       }
-                      else {
+                      else if(payment_type_str.equalsIgnoreCase("Corporate")) {
+                            total_amount_input_str = total_fare_et.getText().toString();
+                            user_pin_code1 = user_secret_pin.getText().toString();
+                            amount_str = total_fare_et.getText().toString();
+                            if (!user_pin_code1.equalsIgnoreCase(user_pin_code) ) {
+                                pincode_errorAlert();
+                            }
+                            else {
+                                new SubmitPayment().execute();
+                            }
+                      }
+                      else  {
+
                           new SubmitPayment().execute();
                       }
 
@@ -192,7 +208,22 @@ public class PaymentAct extends AppCompatActivity {
             }
         });
     }
+    private void pincode_errorAlert(){
+        final Dialog dialogSts = new Dialog(PaymentAct.this);
+        dialogSts.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogSts.setCancelable(false);
+        dialogSts.setContentView(R.layout.pincode_error_alert);
+        dialogSts.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        TextView done_tv = (TextView) dialogSts.findViewById(R.id.yes_tv1);
+        done_tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogSts.dismiss();
 
+            }
+        });
+        dialogSts.show();
+    }
     private class SubmitPayment extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
@@ -329,6 +360,7 @@ public class PaymentAct extends AppCompatActivity {
                 params.put("rating", rating);
                 params.put("timezone", time_zone);
                 params.put("driver_id", MainActivity.user_id);
+                params.put("total_amount", total_amount_input_str);
 
 
                 StringBuilder postData = new StringBuilder();
@@ -507,7 +539,13 @@ public class PaymentAct extends AppCompatActivity {
                     Log.e("GET PAYMENT RESPONSE", "" + result);
                     JSONObject jsonObject = new JSONObject(result);
                     String msg = jsonObject.getString("message");
+
                     if (msg.equalsIgnoreCase("successful")) {
+                        JSONArray jsonArray1 = jsonObject.getJSONArray("user_details");
+                        JSONObject jsonObject4 = jsonArray1.getJSONObject(0);
+
+                        user_pin_code = jsonObject4.getString("pin");
+//                        pin_textView.setText(user_pin_code);
                         JSONArray jsonArray = jsonObject.getJSONArray("result");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
@@ -553,8 +591,8 @@ public class PaymentAct extends AppCompatActivity {
                                 total_fare_et.setVisibility(View.VISIBLE);
                             }
 
-                            else if (jsonObject2.getString("payment_type").equalsIgnoreCase("Voucher")){
-                                payment_type.setText(getResources().getString(R.string.paytype)+" "+getResources().getString(R.string.voucher));
+                            else if (jsonObject2.getString("payment_type").equalsIgnoreCase("Corporate")){
+                                payment_type.setText(getResources().getString(R.string.paytype)+" "+getResources().getString(R.string.corporate));
                                 total_fare.setVisibility(View.GONE);
                                 total_fare_et.setVisibility(View.VISIBLE);
                                 user_secret_pin.setVisibility(View.VISIBLE);

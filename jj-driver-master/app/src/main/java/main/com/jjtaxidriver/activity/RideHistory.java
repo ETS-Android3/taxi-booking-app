@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -176,7 +176,11 @@ private String user_log_data="",user_id="";
             pickuplocation.setText(""+rideBeanArrayList.get(position).getPicuplocation());
             dropofflocation.setText(""+rideBeanArrayList.get(position).getDropofflocation());
             date_tv.setText(""+rideBeanArrayList.get(position).getReq_datetime());
-            paymenttype.setText(""+rideBeanArrayList.get(position).getPayment_type());
+            if(rideBeanArrayList.get(position).getPayment_type().equalsIgnoreCase("Corporate")){
+                paymenttype.setText("" + getResources().getString(R.string.corporate));
+            }else {
+                paymenttype.setText("" + rideBeanArrayList.get(position).getPayment_type());
+            }
             drivername.setText(""+rideBeanArrayList.get(position).getDrivername());
             cardetail.setText(""+rideBeanArrayList.get(position).getDrivercardetail());
             String driver_img_str=rideBeanArrayList.get(position).getDriverimage();

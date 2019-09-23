@@ -14,14 +14,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -88,6 +86,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                 } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                     String message = intent.getStringExtra("message");
                     //Toast.makeText(getApplicationContext(), "Push notification: " + message, Toast.LENGTH_LONG).show();
+                    Log.e("Splash First---- >>", "--------Firebase reg id: " + message);
 
                 }
             }
@@ -95,7 +94,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
         String firebase_regid = pref.getString("regId", null);
-        Log.e("Splash First >>", "Firebase reg id: " + firebase_regid);
+        //Log.e("Splash First >>", "Firebase reg id: " + firebase_regid);
 
         mLastUpdateTime = "";
         updateValuesFromBundle(savedInstanceState);
@@ -144,7 +143,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
         SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
         String firebase_regid = pref.getString("regId", null);
 
-        Log.e("Splash", "Firebase reg id: " + firebase_regid);
+        Log.e("Splash------------", "Firebase reg id: " + firebase_regid);
 
 
     }

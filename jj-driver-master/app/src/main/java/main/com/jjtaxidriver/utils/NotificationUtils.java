@@ -20,7 +20,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -197,12 +197,12 @@ public class NotificationUtils {
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
-               // .setSound(alarmSoundx)
+                // .setSound(alarmSoundx)
                 .setOnlyAlertOnce(true)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setDefaults(Notification.DEFAULT_ALL)
                 //  .setSound(alarmSound)
-               // .setColor(mContext.getResources().getColor(R.color.white))
+                // .setColor(mContext.getResources().getColor(R.color.white))
 
                 .setStyle(bigPictureStyle)
                 .setWhen(getTimeMilliSec(timeStamp))
@@ -254,7 +254,7 @@ public class NotificationUtils {
 
             r = RingtoneManager.getRingtone(mContext, alarmring);
 
-          //  r = RingtoneManager.getRingtone(mContext, alarmSoundx);
+            //  r = RingtoneManager.getRingtone(mContext, alarmSoundx);
             r.play();
         } catch (Exception e) {
             e.printStackTrace();
@@ -307,3 +307,4 @@ public class NotificationUtils {
     }
 
 }
+

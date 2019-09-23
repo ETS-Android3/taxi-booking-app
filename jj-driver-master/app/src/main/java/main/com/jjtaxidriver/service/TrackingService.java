@@ -19,8 +19,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -47,6 +47,7 @@ import main.com.jjtaxidriver.constant.BaseUrl;
 import main.com.jjtaxidriver.constant.GPSTracker;
 import main.com.jjtaxidriver.constant.MySession;
 import main.com.jjtaxidriver.utils.NotificationUtils;
+
 
 
 /**
@@ -97,8 +98,23 @@ public class TrackingService extends Service implements LocationListener {
             }
         }
         int NOTIFICATION_ID = (int) (System.currentTimeMillis()%10000);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(NOTIFICATION_ID, new Notification.Builder(this).build());
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            /*startForeground(NOTIFICATION_ID, new Notification.Builder(this).build());*/
+                notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                String channelId = getString(R.string.app_name);
+                NotificationChannel notificationChannel = new NotificationChannel(channelId, channelId, NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription(channelId);
+                notificationChannel.setSound(null, null);
+
+                notificationManager.createNotificationChannel(notificationChannel);
+
+
+                Notification notification = new Notification.Builder(this, channelId)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText("Connected through SDL")
+                        .build();
+            startForeground(NOTIFICATION_ID, notification );
         }
         initializeLocationManager();
 
@@ -157,6 +173,7 @@ public class TrackingService extends Service implements LocationListener {
 
     }
 
+
     private void BackGroundFunction() {
         TimerTask timerTask2 = new TimerTask() {
             @Override
@@ -205,7 +222,7 @@ public class TrackingService extends Service implements LocationListener {
         };
 
         Timer mTimer2 = new Timer();
-        mTimer2.schedule(timerTask2, 1000, 60000);
+        mTimer2.schedule(timerTask2, 5000, 120000);
     }
 
     private void initializeLocationManager() {
@@ -263,15 +280,24 @@ location = locations;
             int requestCode = 0;
             PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_ONE_SHOT);
             Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.logo)
-                    .setContentText("Your Login Session is expire,Please login again")
-                    .setAutoCancel(true)
-                    .setContentTitle(getResources().getString(R.string.app_name))
-                    .setSound(sound)
-                    .setContentIntent(pendingIntent);
-            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(0, noBuilder.build()); //0 = ID of notification
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                String channelId = getString(R.string.app_name);
+
+                NotificationChannel notificationChannel = new NotificationChannel(channelId, channelId, NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription(channelId);
+                notificationChannel.setSound(null, null);
+
+                NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(this, channelId )
+                        .setSmallIcon(R.drawable.logo)
+                        .setContentText("Your Login Session is expire,Please login again")
+                        .setAutoCancel(true)
+                        .setContentTitle(getResources().getString(R.string.app_name))
+                        .setSound(sound)
+                        .setContentIntent(pendingIntent);
+
+                notificationManager.notify(0, noBuilder.build()); //0 = ID of notification
+            }
             // removeNotification(0);
             mySession.logoutUser();
 
@@ -301,7 +327,6 @@ location = locations;
                 params.put("user_id", user_id);
                 params.put("status", "ONLINE");
                 params.put("register_id", register_id);
-
                 StringBuilder postData = new StringBuilder();
                 for (Map.Entry<String, Object> param : params.entrySet()) {
                     if (postData.length() != 0) postData.append('&');
@@ -347,12 +372,12 @@ location = locations;
                     for (int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         if (jsonObject.getString("status").equalsIgnoreCase("notmach")) {
-                            Log.e("COME >","Yes");
+                            Log.e("COME > state ---notmach","--------------------Yes");
                             Intent j = new Intent("New Request");
                             j.putExtra("result", "notmach");
                             sendBroadcast(j);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
+                                sendNotification(result);
                             } else {
                                 sendNotification(result);
                             }

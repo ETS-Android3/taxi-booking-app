@@ -14,9 +14,10 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
-import android.os.PowerManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +50,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
@@ -115,7 +121,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
     private ImageView carimage, gpslocator;
     private LinearLayout addcarlay, carinfolay;
     public String stateResult;
-    String status_job = "", request_id_main = "";
+    String status_job = "", request_id_main = "", payment_type;
     public static int driver_sts = 0;
     ProgressBar progressbar;
 
@@ -123,7 +129,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
     boolean dialogsts_show = false;
     MapStyleOptions style;
     Dialog booking_request_dialog ;
-
+    RelativeLayout color_Background;
     private enum TimerStatus {
         STARTED,
         STOPPED
@@ -147,8 +153,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
     private LinearLayout infolay;
     private ImageView showhideimg;
     private boolean isVisible = true;
-    public TimerTask timerTask2;
     public Bundle savedActivity;
+    public static String user_pincode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         savedActivity=savedInstanceState;
@@ -178,16 +184,16 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
             win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
             // unlock screen
 
-            if (MyFirebaseMessagingService.kl!=null){
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//            if (MyFirebaseMessagingService.kl!=null){
+//                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//
+//            }
 
-            }
-
-                        KeyguardManager km = (KeyguardManager) getApplicationContext()
+                        /*KeyguardManager km = (KeyguardManager) getApplicationContext()
                                 .getSystemService(Context.KEYGUARD_SERVICE);
                         final KeyguardManager.KeyguardLock kl = km
                                 .newKeyguardLock("MyKeyguardLock");
-                        kl.reenableKeyguard();
+                        kl.reenableKeyguard();*/
 
 
         }catch (Exception e){
@@ -235,20 +241,26 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
         idinits();
         checkGps();
         clickevents();
-        timerTask2 = new TimerTask() {
-            @Override
-            public void run() {
 
-                new GetCurrentBooking().execute();
-                new GetDriverProfile().execute();
-                Log.e("mas-------------------", "sdfsfsdf-----------------------------");
+        final String TAG ="MainActivity";
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
 
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
 
-            }
-        };
-
-        Timer mTimer2 = new Timer();
-        mTimer2.schedule(timerTask2, 1000, 5000);
+                        // Log and toast
+                        String msg = token;
+                        Log.d(TAG, msg);
+//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         try {
             // Loading map
@@ -257,15 +269,17 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
                     FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
+                    Log.e("KEY MSG MAIN ACT=", "-----------------------" );
 
                 } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                     String message = intent.getStringExtra("message");
-
+                    Log.e("KEY MSG MAIN ACT=", "-----------------------" );
                     JSONObject data = null;
                     try {
                         data = new JSONObject(message);
@@ -285,7 +299,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                                 String booktype = data.getString("booktype");
                                 String rating = data.getString("rating");
                                 String favorite_ride = data.getString("favorite_ride");
-
+                                payment_type = data.getString("payment_type");
                                 diff_second = data.getString("diff_second");
                                 showNewRequest(firstname, lastname, picuplocation, dropofflocation, request_id, picklaterdate, picklatertime, booktype, rating, favorite_ride);
 
@@ -303,6 +317,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                                 String booktype = data.getString("booktype");
                                 String rating = data.getString("rating");
                                 diff_second = data.getString("diff_second");
+                                payment_type = data.getString("payment_type");
                                 String favorite_ride = data.getString("favorite_ride");
                                 showNewRequest(firstname, lastname, picuplocation, dropofflocation, request_id, picklaterdate, picklatertime, booktype, rating, favorite_ride);
 
@@ -320,6 +335,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                                 String favorite_ride = data.getString("favorite_ride");
                                 request_id = String.valueOf(data.getInt("request_id"));
                                 diff_second = data.getString("diff_second");
+                                payment_type = data.getString("payment_type");
                                 showNewRequest(firstname, lastname, picuplocation, dropofflocation, request_id, picklaterdate, picklatertime, booktype, rating, favorite_ride);
 
                             } else if (booking_request_dialog.isShowing()) {
@@ -336,7 +352,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                                 String booktype = data.getString("booktype");
                                 String rating = data.getString("rating");
                                 String favorite_ride = data.getString("favorite_ride");
-
+                                payment_type = data.getString("payment_type");
                                 showNewRequest(firstname, lastname, picuplocation, dropofflocation, request_id, picklaterdate, picklatertime, booktype, rating, favorite_ride);
 
                             }
@@ -450,9 +466,10 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
         LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.PUSH_NOTIFICATION));
         NotificationUtils.clearNotifications(MainActivity.this.getApplicationContext());
-        new GetStateBooking().execute();
-        /*new GetCurrentBooking().execute();
-        new GetDriverProfile().execute();*/
+
+        /*new GetStateBooking().execute();*/
+        new GetCurrentBooking().execute();
+        new GetDriverProfile().execute();
 
     }
 
@@ -694,7 +711,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
         booking_request_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         booking_request_dialog.setCancelable(false);
         booking_request_dialog.setContentView(R.layout.custom_new_job_lay);
+        if(payment_type.equalsIgnoreCase("Corporate")) {
+            booking_request_dialog.findViewById(R.id.requestScreen).setBackgroundColor(getResources().getColor(R.color.blue));
+        }
         booking_request_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+//        color_Background = booking_request_dialog.findViewById(R.id.locationlay);
+//        color_Background.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_bright));
         TextView decline = (TextView) booking_request_dialog.findViewById(R.id.decline);
         TextView datetimetv = (TextView) booking_request_dialog.findViewById(R.id.datetimetv);
         TextView rating_tv = (TextView) booking_request_dialog.findViewById(R.id.rating_tv);
@@ -729,7 +752,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
             /*newsec=60;*/
         } else {
             int difernce = Integer.parseInt(diff_second);
-            newsec = sec - difernce;
+//            newsec = sec - difernce;
+            newsec = 59 ;
         }
         Log.e("newsec >>", "dd " + newsec);
         timeCountInMilliSeconds = 1 * newsec * mili;
@@ -1240,9 +1264,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                 Map<String, Object> params = new LinkedHashMap<>();
                 params.put("user_id", MainActivity.user_id);
                 params.put("type", "DRIVER");
-
                 params.put("timezone", time_zone);
-
                 StringBuilder postData = new StringBuilder();
                 for (Map.Entry<String, Object> param : params.entrySet()) {
                     if (postData.length() != 0) postData.append('&');
@@ -1287,8 +1309,8 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                         Log.e("CURRENT BOOKING >>>", "" + result);
                         JSONObject jsonObject = new JSONObject(result);
                         String msg = jsonObject.getString("message");
-                        if (msg.equalsIgnoreCase("successfull")&& (!stateResult.equalsIgnoreCase(msg))) {
-
+                        /*if (msg.equalsIgnoreCase("successfull")&& (!stateResult.equalsIgnoreCase(msg))) {*/
+                            if (msg.equalsIgnoreCase("successfull")) {
                             diff_second = jsonObject.getString("diff_second");
                             JSONArray jsonArray = jsonObject.getJSONArray("result");
                             for (int i = 0; i < jsonArray.length(); i++) {
@@ -1313,6 +1335,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                                     String picklatertime = jsonObject1.getString("picklatertime");
                                     String booktype = jsonObject1.getString("booktype");
                                     String favorite_ride = jsonObject1.getString("favorite_ride");
+                                    payment_type = jsonObject1.getString("payment_type");
                                     JSONArray jsonArray1 = jsonObject1.getJSONArray("user_details");
                                     for (int k = 0; k < jsonArray1.length(); k++) {
                                         JSONObject jsonObject2 = jsonArray1.getJSONObject(k);
@@ -1383,7 +1406,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
                             }
 
                         }
-                        stateResult=msg;
+                        /*stateResult=msg;*/
 
 
                     } catch (JSONException e) {
@@ -1398,177 +1421,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback {
 
         }
     }
-    private class GetStateBooking extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // progressbar.setVisibility(View.VISIBLE);
 
-            try {
-                super.onPreExecute();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            try {
-//http://mobileappdevelop.co/NAXCAN/webservice/get_current_booking?user_id=1
-                String postReceiverUrl = BaseUrl.baseurl + "get_current_booking?";
-                URL url = new URL(postReceiverUrl);
-                Map<String, Object> params = new LinkedHashMap<>();
-                params.put("user_id", MainActivity.user_id);
-                params.put("type", "DRIVER");
-
-                params.put("timezone", time_zone);
-
-                StringBuilder postData = new StringBuilder();
-                for (Map.Entry<String, Object> param : params.entrySet()) {
-                    if (postData.length() != 0) postData.append('&');
-                    postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
-                    postData.append('=');
-                    postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
-                }
-                String urlParameters = postData.toString();
-                URLConnection conn = url.openConnection();
-                conn.setDoOutput(true);
-                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-                writer.write(urlParameters);
-                writer.flush();
-                String response = "";
-                String line;
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line = reader.readLine()) != null) {
-                    response += line;
-                }
-                writer.close();
-                reader.close();
-                return response;
-            } catch (UnsupportedEncodingException e1) {
-                e1.printStackTrace();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-
-            super.onPostExecute(result);
-            //progressbar.setVisibility(View.GONE);
-            if (result == null) {
-            } else if (result.isEmpty()) {
-            } else {
-
-                try {
-
-                    JSONObject jsonObject = new JSONObject(result);
-                    String msg = jsonObject.getString("message");
-                    if (msg.equalsIgnoreCase("successfull")) {
-
-                        diff_second = jsonObject.getString("diff_second");
-                        JSONArray jsonArray = jsonObject.getJSONArray("result");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                            request_id = jsonObject1.getString("id");
-                            try {
-                                Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(jsonObject1.getString("req_datetime"));
-                                SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy HH:mm");
-                                strDate = formatter.format(date1);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            String status = jsonObject1.getString("status");
-                            if (status.equalsIgnoreCase("Pending")) {
-                                String firstname = "";
-                                String lastname = "";
-                                String rating = "";
-                                String picuplocation = jsonObject1.getString("picuplocation");
-                                String dropofflocation = jsonObject1.getString("dropofflocation");
-                                request_id = String.valueOf(jsonObject1.getString("id"));
-                                String picklaterdate = jsonObject1.getString("picklaterdate");
-                                String picklatertime = jsonObject1.getString("picklatertime");
-                                String booktype = jsonObject1.getString("booktype");
-                                String favorite_ride = jsonObject1.getString("favorite_ride");
-                                JSONArray jsonArray1 = jsonObject1.getJSONArray("user_details");
-                                for (int k = 0; k < jsonArray1.length(); k++) {
-                                    JSONObject jsonObject2 = jsonArray1.getJSONObject(k);
-                                    firstname = jsonObject2.getString("first_name");
-                                    lastname = jsonObject2.getString("last_name");
-                                    rating = jsonObject2.getString("rating");
-                                }
-
-                                if (booking_request_dialog == null) {
-                                    if (NotificationUtils.r != null && NotificationUtils.r.isPlaying()) {
-                                        NotificationUtils.r.stop();
-                                    }
-
-                                    showNewRequest(firstname, lastname, picuplocation, dropofflocation, request_id, picklaterdate, picklatertime, booktype, rating, favorite_ride);
-
-                                } else if (booking_request_dialog.isShowing()) {
-
-                                } else {
-                                    if (NotificationUtils.r != null && NotificationUtils.r.isPlaying()) {
-                                        NotificationUtils.r.stop();
-                                    }
-                                    NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
-                                    notificationUtils.playNotificationSound();
-                                    showNewRequest(firstname, lastname, picuplocation, dropofflocation, request_id, picklaterdate, picklatertime, booktype, rating, favorite_ride);
-
-                                }
-
-                            } else if (status.equalsIgnoreCase("Accept")) {
-                                if (NotificationUtils.r != null && NotificationUtils.r.isPlaying()) {
-                                    NotificationUtils.r.stop();
-                                }
-                                Intent k = new Intent(MainActivity.this, TripStatusAct.class);
-                                startActivity(k);
-                            } else if (status.equalsIgnoreCase("Arrived")) {
-                                if (NotificationUtils.r != null && NotificationUtils.r.isPlaying()) {
-                                    NotificationUtils.r.stop();
-                                }
-                                Intent j = new Intent(MainActivity.this, TripStatusAct.class);
-                                startActivity(j);
-                            } else if (status.equalsIgnoreCase("Start")) {
-                                if (NotificationUtils.r != null && NotificationUtils.r.isPlaying()) {
-                                    NotificationUtils.r.stop();
-                                }
-                                Intent j = new Intent(MainActivity.this, TripStatusAct.class);
-                                startActivity(j);
-                            } else if (status.equalsIgnoreCase("End")) {
-                                if (NotificationUtils.r != null && NotificationUtils.r.isPlaying()) {
-                                    NotificationUtils.r.stop();
-                                }
-                                Intent j = new Intent(MainActivity.this, PaymentAct.class);
-                                startActivity(j);
-                            }
-                        }
-                    } else {
-
-                        if (NotificationUtils.r != null && NotificationUtils.r.isPlaying()) {
-                            NotificationUtils.r.stop();
-
-
-                        }
-
-                    }
-
-
-                } catch (JSONException e) {
-                    if (NotificationUtils.r != null && NotificationUtils.r.isPlaying()) {
-                        NotificationUtils.r.stop();
-                    }
-
-                    e.printStackTrace();
-                }
-            }
-
-
-        }
-    }
     private class ChgStatus extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "788193772644",
+    "firebase_url": "https://jj-taxi-driver.firebaseio.com",
+    "project_id": "jj-taxi-driver",
+    "storage_bucket": "jj-taxi-driver.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788193772644:android:2b1cd66b5e059709",
+        "android_client_info": {
+          "package_name": "main.com.jjtaxidriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "788193772644-p1uu0sint9hm776atmpl4dcuu0da95vf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8Sk0YCiAaTrXXdtfSB7O34KPOETHhkDg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
